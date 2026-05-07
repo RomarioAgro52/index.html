@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Ballroom | Школа бальных танцев — интерактив</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.5;
+        }
+
+        /* Контейнер */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Типографика */
+        h1, h2, h3 {
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+        h2 {
+            font-size: 2.8rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+        }
+        h2:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 2px;
+            background: #c9a03d;
+            margin: 12px auto 0;
+        }
+        .accent {
+            color: #c9a03d;
+        }
+
+        /* Hero секция */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('https://source.unsplash.com/featured/?ballroom,dance') center/cover;
+            display: flex;
+            align-items: center;
+            text-align: center;
+        }
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        .btn {
+            display: inline-block;
+            background: #c9a03d;
+            color: #0a0a0a;
+            padding: 14px 42px;
+            text-decoration: none;
+            font-weight: bold;
+            letter-spacing: 1px;
+            border-radius: 40px;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .btn:hover {
+            background: #e0b354;
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(201,160,61,0.3);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #c9a03d;
+            color: #c9a03d;
+        }
+        .btn-outline:hover {
+            background: #c9a03d;
+            color: #0a0a0a;
+        }
+
+        /* Сетка направлений */
+        .directions-grid, .teachers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .direction-card, .teacher-card {
+            background: #111111;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .direction-card:hover, .teacher-card:hover {
+            border-bottom-color: #c9a03d;
+            transform: translateY(-5px);
+            background: #141414;
+        }
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .teacher-card img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 3px solid #c9a03d;
+        }
+        .teacher-card h3 {
+            margin-bottom: 0.5rem;
+        }
+        .title {
+            color: #c9a03d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Расписание */
+        .schedule-table {
+            background: #111;
+            border-radius: 16px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        .schedule-day {
+            display: grid;
+            grid-template-columns: 200px 1fr 120px;
+            border-bottom: 1px solid #222;
+            padding: 16px 24px;
+            align-items: center;
+        }
+        .schedule-day:last-child {
+            border-bottom: none;
+        }
+        .day-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #c9a03d;
+        }
+        .class-info {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .class-time {
+            background: #1e1e1e;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        .status {
+            font-size: 0.8rem;
+            color: #4caf50;
+        }
+        .status.full {
+            color: #f44336;
+        }
+
+        /* Форма записи */
+        .booking-form {
+            background: #111;
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            background: #1e1e1e;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #c9a03d;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Блок "Отзывы учеников" — динамический (JS) */
+        .reviews-section {
+            padding: 80px 0;
+            background: #0b0b0b;
+        }
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.8rem;
+            margin-top: 2rem;
+        }
+        .review-card {
+            background: #111;
+            padding: 1.5rem;
+            border-radius: 20px;
+            border-left: 4px solid #c9a03d;
+            transition: 0.2s;
+        }
+        .review-card p {
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+        .review-author {
+            color: #c9a03d;
+            font-weight: bold;
+            text-align: right;
+        }
+        .add-review-area {
+            margin-top: 2rem;
+            background: #0f0f0f;
+            padding: 1.5rem;
+            border-radius: 28px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+        .add-review-area .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .small-btn {
+            background: #c9a03d;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .small-btn:hover {
+            background: #e0b354;
+        }
+        .counter-info {
+            text-align: right;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            color: #aaa;
+        }
+
+        footer {
+            background: #050505;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .schedule-day { grid-template-columns: 1fr; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero-блок: главный экран -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Grand <span class="accent">Ballroom</span></h1>
+            <p>Школа бальных танцев. Элегантность, страсть и безупречный стиль.</p>
+            <a href="#booking" class="btn">Записаться на пробный урок</a>
+            <a href="#schedule" class="btn btn-outline" style="margin-left: 1rem;">Смотреть расписание</a>
+        </div>
+    </section>
+
+    <!-- Направления танцев -->
+    <section style="padding: 80px 0;">
+        <div class="container">
+            <h2>Наши направления</h2>
+            <div class="directions-grid">
+                <div class="direction-card">
+                    <div class="icon">💃</div>
+                    <h3>Европейская программа</h3>
+                    <p>Медленный вальс, танго, венский вальс, фокстрот, квикстеп. Изысканность и строгость линий.</p>
+                </div>
+                <div class="direction-card">
+                    <div class="icon">🕺</div>
+                    <h3>Латиноамериканская программа</h3>
+                    <p>Самба, ча-ча-ча, румба, пасодобль, джайв. Энергия, ритм и чувственность.</p>
+                </div>
+                <div class="direction-card">
+                    <div class="icon">👯</div>
+                    <h3>Дети (от 4 лет)</h3>
+                    <p>Ритмика, основы бального танца, постановка корпуса, первые соревнования.</p>
+                </div>
+                <div class="direction-card">
+                    <div class="icon">🏆</div>
+                    <h3>Спорт высших достижений</h3>
+                    <p>Подготовка к чемпионатам, работа с парой, хореография, латино-шоу.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Преподаватели -->
+    <section style="padding: 80px 0; background: #0f0f0f;">
+        <div class="container">
+            <h2>Преподаватели</h2>
+            <div class="teachers-grid">
+                <div class="teacher-card">
+                    <img src="https://avatars.mds.yandex.net/i?id=a2304203be8e050e9d3ce62f190bdb1e_l-4119111-images-thumbs&n=13" alt="Анна Волкова">
+                    <h3>Анна Волкова</h3>
+                    <div class="title">Заслуженный тренер РФ, МСМК</div>
+                    <p>Европейская программа, постановка корпуса. Стаж 15 лет.</p>
+                </div>
+                <div class="teacher-card">
+                    <img src="https://sun9-15.userapi.com/s/v1/ig2/WWIt3VLviBy0cm4sBAspR4Lb9JkPSh8W8uaIlLwuuqD8TdGhmQ8Lyh3DKwfyLgUbNZ5xBgSNatq74Nzkt70AHBXi.jpg?quality=95&as=32x37,48x55,72x83,108x124,160x184,240x276,355x408&from=bu&u=r9SYBS-AWWoOLHw1q2V7X7Dgd4ck3c6DQWsW2-NoHlc&cs=355x0" alt="Дмитрий Орлов">
+                    <h3>Кварталов Руслан</h3>
+                    <div class="title">Участник танцевального клуба, КМС</div>
+                    <p>Дошкольная ритмика, детские группы, постановка групповых номеров.</p>
+                </div>
+                <div class="teacher-card">
+                    <img src="https://static.tildacdn.com/tild3130-3564-4062-b063-663831363838/photo_2023-12-26_21-.jpg">
+                    <h3>Екатерина Миронова</h3>
+                    <div class="title">Педагог-хореограф, тренер детей</div>
+                    <p>Латинская программа, шоу-номера, работа с энергией.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Расписание -->
+    <section id="schedule" style="padding: 80px 0;">
+        <div class="container">
+            <h2>Расписание</h2>
+            <div class="schedule-table">
+                <div class="schedule-day">
+                    <div class="day-name">ПОНЕДЕЛЬНИК</div>
+                    <div class="class-info">
+                        <span class="class-time">16:00 – 17:30</span> Дети (7-10 лет) / Европа
+                        <span class="status">✅ есть места</span>
+                    </div>
+                    <div class="class-info">
+                        <span class="class-time">19:00 – 21:00</span> Взрослые (начинающие) / Латина
+                        <span class="status">✅ есть места</span>
+                    </div>
+                </div>
+                <div class="schedule-day">
+                    <div class="day-name">СРЕДА</div>
+                    <div class="class-info">
+                        <span class="class-time">17:00 – 18:30</span> Дети (спорт) / Европа+Латина
+                        <span class="status full">⚠️ мест нет</span>
+                    </div>
+                    <div class="class-info">
+                        <span class="class-time">20:00 – 22:00</span> Взрослые (продвинутые) / Латина
+                        <span class="status">✅ есть места</span>
+                    </div>
+                </div>
+                <div class="schedule-day">
+                    <div class="day-name">СУББОТА</div>
+                    <div class="class-info">
+                        <span class="class-time">11:00 – 12:30</span> Дети (4-6 лет) / Ритмика
+                        <span class="status">✅ есть места</span>
+                    </div>
+                    <div class="class-info">
+                        <span class="class-time">13:00 – 15:00</span> Взрослые / Европа (вальс, танго)
+                        <span class="status">✅ есть места</span>
+                    </div>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 1rem;">* Индивидуальные занятия возможны по предварительной записи</p>
+        </div>
+    </section>
+
+    <!-- ========== ДИНАМИЧЕСКИЙ БЛОК: ОТЗЫВЫ (JS + МАССИВЫ + ДОБАВЛЕНИЕ ЭЛЕМЕНТОВ) ========== -->
+    <section class="reviews-section" id="reviewsBlock">
+        <div class="container">
+            <h2>Отзывы наших учеников</h2>
+            <div id="reviewsContainer" class="reviews-grid">
+                <!-- Стартовые отзывы (загружаются из массива объектов) -->
+            </div>
+            <!-- Форма добавления нового отзыва - обработка событий, ввод текста, динамическое добавление -->
+            <div class="add-review-area">
+                <div class="form-group" style="flex: 2;">
+                    <label>Ваше имя</label>
+                    <input type="text" id="reviewNameInput" placeholder="Например, Екатерина" style="margin-bottom: 0;">
+                </div>
+                <div class="form-group" style="flex: 3;">
+                    <label>Ваш отзыв о школе</label>
+                    <input type="text" id="reviewTextInput" placeholder="Танцы изменили мою жизнь! Прекрасная атмосфера..." style="margin-bottom: 0;">
+                </div>
+                <div>
+                    <button id="addReviewBtn" class="small-btn" style="margin-top: 24px;">➕ Оставить отзыв</button>
+                </div>
+            </div>
+            <div class="counter-info" id="reviewsCounter">⭐ Всего отзывов: 0</div>
+        </div>
+    </section>
+
+    <!-- Форма записи -->
+    <section id="booking" style="padding: 80px 0; background: #0f0f0f;">
+        <div class="container">
+            <h2>Запись на пробный урок</h2>
+            <div class="booking-form">
+                <!-- Небольшая обработка отправки формы через JS (с уведомлением) -->
+                <form id="trialForm">
+                    <div class="form-group">
+                        <label>Ваше имя</label>
+                        <input type="text" id="formName" placeholder="Анна" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Телефон</label>
+                        <input type="tel" id="formPhone" placeholder="+7 (___) ___-__-__" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Направление</label>
+                        <select id="formDirection">
+                            <option>Европейская программа</option>
+                            <option>Латиноамериканская программа</option>
+                            <option>Детская группа (4-6 лет)</option>
+                            <option>Детская группа (7-12 лет)</option>
+                            <option>Индивидуальное занятие</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Удобный день для пробного урока</label>
+                        <input type="date" id="formDate" min="2025-03-27">
+                    </div>
+                    <div class="form-group">
+                        <label>Комментарий</label>
+                        <textarea id="formComment" rows="3" placeholder="Есть ли опыт танцев?"></textarea>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Отправить заявку</button>
+                    <p style="font-size: 12px; text-align: center; margin-top: 1rem;">Нажимая на кнопку, вы соглашаетесь с политикой обработки данных</p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>Grand Ballroom Dance School | Нижний Новгород, ул. Танцевальная, 12 | +7 (920) 031-72-64</p>
+            <p>© 2025 Все права защищены. Следите за нами в Instagram и Telegram</p>
+        </div>
+    </footer>
+
+    <script>
+        // 1. МАССИВ ОБЪЕКТОВ с отзывами (работа с данными)
+        let reviewsArray = [
+            { id: 1, author: "Мария С.", text: "Занимаюсь второй год. Преподаватели — мастера своего дела! Очень эстетичная школа, чувствую прогресс в пластике и уверенности.", date: "2026-02-10" },
+            { id: 2, author: "Алексей К.", text: "Пришел с нуля танцевать, через полгода уже участвовал в любительском турнире. Атмосфера дружеская, советую всем!", date: "2026-03-01" },
+            { id: 3, author: "Елена В.", text: "Дочка (5 лет) обожает ритмику. Занятия проходят весело, видно как она ждет каждую субботу. Спасибо команде Grand Ballroom!", date: "2026-03-15" }
+        ];
+
+        // Функция для отображения всех отзывов (динамическая отрисовка)
+        function renderReviews() {
+            const container = document.getElementById('reviewsContainer');
+            if (!container) return;
+            
+            // Очищаем контейнер перед новой отрисовкой
+            container.innerHTML = '';
+            
+            // Проходим по массиву объектов и для каждого создаём карточку
+            reviewsArray.forEach(review => {
+                const reviewCard = document.createElement('div');
+                reviewCard.className = 'review-card';
+                // Используем шаблонную строку для содержимого
+                reviewCard.innerHTML = `
+                    <p>“${escapeHtml(review.text)}”</p>
+                    <div class="review-author">— ${escapeHtml(review.author)}</div>
+                    <div style="font-size: 0.7rem; text-align: right; margin-top: 8px; color: #777;">📅 ${review.date}</div>
+                `;
+                container.appendChild(reviewCard);
+            });
+            
+            // Обновляем счетчик отзывов (работа с длиной массива)
+            const counterSpan = document.getElementById('reviewsCounter');
+            if (counterSpan) {
+                counterSpan.innerHTML = `⭐ Всего отзывов: ${reviewsArray.length} | Гордое наследие танцоров ✨`;
+            }
+        }
+        
+        // Простая функция для защиты от XSS (экранирование)
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c;
+            });
+        }
+        
+        // Функция добавления нового отзыва (динамическое изменение страницы + работа с массивом)
+        function addNewReview() {
+            const nameInput = document.getElementById('reviewNameInput');
+            const textInput = document.getElementById('reviewTextInput');
+            
+            let author = nameInput.value.trim();
+            let reviewText = textInput.value.trim();
+            
+            // Валидация: оба поля не должны быть пустыми
+            if (author === "") {
+                alert("Пожалуйста, укажите ваше имя, чтобы оставить отзыв!");
+                nameInput.focus();
+                return false;
+            }
+            if (reviewText === "") {
+                alert("Напишите свой отзыв о школе танцев — нам важно ваше мнение!");
+                textInput.focus();
+                return false;
+            }
+            
+            // Создаём новый объект отзыва
+            const newId = reviewsArray.length > 0 ? Math.max(...reviewsArray.map(r => r.id)) + 1 : 1;
+            const today = new Date();
+            const formattedDate = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+            
+            const newReview = {
+                id: newId,
+                author: author,
+                text: reviewText,
+                date: formattedDate
+            };
+            
+            // Добавляем объект в массив (работа с массивами: push)
+            reviewsArray.push(newReview);
+            
+            // Перерисовываем список отзывов (динамическое изменение DOM)
+            renderReviews();
+            
+            // Очищаем поля ввода после добавления
+            nameInput.value = '';
+            textInput.value = '';
+            
+            // Небольшой визуальный фидбек
+            alert(`Спасибо, ${author}! Ваш отзыв опубликован.`);
+            return true;
+        }
+        
+        // 2. ОБРАБОТКА СОБЫТИЙ - Клик на кнопку добавления отзыва
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация: отображаем существующие отзывы при загрузке страницы
+            renderReviews();
+            
+            // Кнопка "Оставить отзыв"
+            const addBtn = document.getElementById('addReviewBtn');
+            if (addBtn) {
+                addBtn.addEventListener('click', addNewReview);
+            }
+            
+            // 3. ДОПОЛНИТЕЛЬНАЯ ОБРАБОТКА ФОРМЫ ЗАПИСИ (Предотвращаем реальную отправку, показываем уведомление)
+            const trialForm = document.getElementById('trialForm');
+            if (trialForm) {
+                trialForm.addEventListener('submit', function(event) {
+                    event.preventDefault();   // отменяем стандартную отправку (т.к. нет бэкенда)
+                    
+                    // Получаем значения полей
+                    const userName = document.getElementById('formName').value.trim();
+                    const userPhone = document.getElementById('formPhone').value.trim();
+                    const direction = document.getElementById('formDirection').value;
+                    const lessonDate = document.getElementById('formDate').value;
+                    const comment = document.getElementById('formComment').value;
+                    
+                    // Проверка обязательных полей
+                    if (userName === "" || userPhone === "") {
+                        alert("Пожалуйста, заполните имя и телефон для записи на пробный урок!");
+                        return;
+                    }
+                    
+                    // Имитация отправки данных (можно вывести в консоль / показать сообщение)
+                    console.log("=== Данные заявки ===");
+                    console.log(`Имя: ${userName}`);
+                    console.log(`Телефон: ${userPhone}`);
+                    console.log(`Направление: ${direction}`);
+                    console.log(`Дата: ${lessonDate || "не выбрана"}`);
+                    console.log(`Комментарий: ${comment}`);
+                    
+                    // Дополнительно: динамически создаём уведомление (можно удалить через 3 секунды)
+                    const successMsg = document.createElement('div');
+                    successMsg.textContent = `✨ ${userName}, ваша заявка принята! Мы свяжемся с вами в ближайшее время. ✨`;
+                    successMsg.style.backgroundColor = '#1e3a1e';
+                    successMsg.style.color = '#c9e0a0';
+                    successMsg.style.padding = '12px';
+                    successMsg.style.borderRadius = '80px';
+                    successMsg.style.textAlign = 'center';
+                    successMsg.style.marginTop = '20px';
+                    successMsg.style.fontSize = '0.9rem';
+                    successMsg.style.border = '1px solid #c9a03d';
+                    
+                    const formContainer = document.querySelector('.booking-form');
+                    const oldAlert = formContainer.querySelector('.custom-alert');
+                    if (oldAlert) oldAlert.remove();
+                    successMsg.classList.add('custom-alert');
+                    formContainer.appendChild(successMsg);
+                    
+                    // Очищаем форму (необязательно, но приятно)
+                    document.getElementById('formName').value = '';
+                    document.getElementById('formPhone').value = '';
+                    document.getElementById('formComment').value = '';
+                    document.getElementById('formDate').value = '';
+                    
+                    // Автоматически удаляем уведомление через 4 секунды
+                    setTimeout(() => {
+                        if (successMsg && successMsg.remove) successMsg.remove();
+                    }, 4000);
+                });
+            }
+            
+            // 4. ДОПОЛНИТЕЛЬНЫЙ ИНТЕРАКТИВ: пример обработки ввода текста в поле "Ваше имя" (динамический подсказ)
+            const nameField = document.getElementById('reviewNameInput');
+            if (nameField) {
+                nameField.addEventListener('input', function(e) {
+                    // просто для демонстрации: если пользователь вводит "Анна" или "Дмитрий", меняем стиль границы (милая фишка)
+                    if (e.target.value.length > 2) {
+                        e.target.style.borderColor = "#c9a03d";
+                    } else {
+                        e.target.style.borderColor = "#333";
+                    }
+                });
+            }
+            
+            // (Доп.) использование объекта со списком преподавателей и вывод в консоль — пример работы с объектами
+            const teachersList = [
+                { name: "Анна Волкова", style: "Европейская программа", achievement: "МСМК" },
+                { name: "Дмитрий Орлов", style: "Латиноамериканская", achievement: "Финалист ЧР" },
+                { name: "Екатерина Миронова", style: "Детская ритмика", achievement: "Педагог-хореограф" }
+            ];
+            // Выводим информацию о преподавателях в консоль (background работа с объектами и массивами)
+            console.log("🏆 Наши преподаватели (объекты):");
+            teachersList.forEach(teacher => {
+                console.log(` - ${teacher.name} | ${teacher.style} | ${teacher.achievement}`);
+            });
+            
+            // 5. пример обработки клика на карточку направления (динамическая подсказка) — показывает алерт с описанием
+            const directionCards = document.querySelectorAll('.direction-card');
+            directionCards.forEach((card, index) => {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', () => {
+                    const titles = ['Европейская программа', 'Латиноамериканская программа', 'Дети (от 4 лет)', 'Спорт высших достижений'];
+                    if (titles[index]) {
+                        alert(`✨ Вы выбрали направление «${titles[index]}». Запишитесь на пробный урок через форму ниже! ✨`);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
